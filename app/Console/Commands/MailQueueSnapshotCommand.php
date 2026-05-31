@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Process\Process;
 
 class MailQueueSnapshotCommand extends Command
 {
@@ -24,7 +25,10 @@ class MailQueueSnapshotCommand extends Command
         $failed = 0;
         $raw = [];
 
-        $output = @shell_exec('postqueue -p 2>/dev/null');
+        $process = new Process(['postqueue', '-p']);
+        $process->setTimeout(25);
+        $process->run();
+        $output = $process->isSuccessful() ? $process->getOutput() : '';
         if ($output) {
             $raw['postqueue'] = mb_substr($output, 0, 5000);
             $lines = preg_split('/\r?\n/', trim($output));
