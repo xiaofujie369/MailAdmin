@@ -1,4 +1,6 @@
 .env
+/.env.*
+!/.env.example
 *.db
 *.sqlite
 *.sqlite3
@@ -11,3 +13,19 @@ venv/
 .venv/
 *.log
 main.py.bak.*
+/vendor/
+/node_modules/
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/backups/

@@ -2,11 +2,10 @@
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-/opt/mailadmin-pro}"
-SERVICE_NAME="mailadmin-pro"
 
-require_root() {
+need_root() {
   if [ "${EUID}" -ne 0 ]; then
-    echo "Please run as root." >&2
+    echo "请使用 root 执行安装脚本。" >&2
     exit 1
   fi
 }
@@ -15,31 +14,35 @@ valid_path() {
   [[ "$1" =~ ^/[A-Za-z0-9._/@+-]+$ ]]
 }
 
-require_root
-
+need_root
 if ! valid_path "${APP_DIR}"; then
-  echo "Invalid APP_DIR: ${APP_DIR}" >&2
+  echo "APP_DIR 不合法：${APP_DIR}" >&2
   exit 1
 fi
 
-apt-get update
-apt-get install -y python3 python3-venv python3-pip curl dnsutils git docker.io
+command -v docker >/dev/null || { echo "未安装 Docker。" >&2; exit 1; }
+docker compose version >/dev/null || { echo "未安装 Docker Compose v2。" >&2; exit 1; }
 
-install -d -m 0755 "${APP_DIR}"
 cd "${APP_DIR}"
 
-python3 -m venv venv
-"${APP_DIR}/venv/bin/pip" install --upgrade pip
-"${APP_DIR}/venv/bin/pip" install -r requirements.txt
-
 if [ ! -f .env ]; then
-  install -m 0600 example.env .env
-  echo "Created ${APP_DIR}/.env. Edit ADMIN_PASS before exposing the service."
-else
-  chmod 0600 .env
+  install -m 0600 .env.example .env
+  echo "已创建 .env，请修改 ADMIN_PASSWORD、DB_PASSWORD、APP_URL 后再次运行。"
+  exit 1
 fi
+chmod 0600 .env
 
-install -m 0644 systemd/mailadmin-pro.service "/etc/systemd/system/${SERVICE_NAME}.service"
-systemctl daemon-reload
-systemctl enable --now "${SERVICE_NAME}"
-systemctl status "${SERVICE_NAME}" --no-pager
+docker compose build
+docker compose up -d mailadmin-mysql mailadmin-redis
+sleep 15
+docker compose run --rm mailadmin-app composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+docker compose run --rm mailadmin-app php artisan key:generate --force
+docker compose run --rm mailadmin-app php artisan migrate --force
+docker compose run --rm mailadmin-app php artisan mailadmin:create-admin
+docker compose up -d
+docker compose run --rm mailadmin-app php artisan config:cache
+docker compose run --rm mailadmin-app php artisan route:cache
+docker compose run --rm mailadmin-app php artisan view:cache
+
+curl -fsS http://127.0.0.1:8095 >/dev/null
+echo "MailAdmin Pro 已安装：http://127.0.0.1:8095"

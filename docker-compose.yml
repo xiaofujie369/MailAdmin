@@ -1,0 +1,81 @@
+services:
+  mailadmin-app:
+    build: .
+    container_name: mailadmin-app
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./:/var/www/html
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mailadmin-mysql
+      - mailadmin-redis
+
+  mailadmin-nginx:
+    image: nginx:1.27-alpine
+    container_name: mailadmin-nginx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8095:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - mailadmin-app
+
+  mailadmin-mysql:
+    image: mysql:8.4
+    container_name: mailadmin-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-mailadmin}
+      MYSQL_USER: ${DB_USERNAME:-mailadmin}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-change-me}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change-root-password}
+    volumes:
+      - mailadmin_mysql:/var/lib/mysql
+    networks:
+      default:
+        aliases:
+          - mysql
+
+  mailadmin-redis:
+    image: redis:7-alpine
+    container_name: mailadmin-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - mailadmin_redis:/data
+    networks:
+      default:
+        aliases:
+          - redis
+
+  mailadmin-worker:
+    build: .
+    container_name: mailadmin-worker
+    restart: unless-stopped
+    env_file: .env
+    command: ["php", "artisan", "queue:work", "redis", "--sleep=3", "--tries=3", "--timeout=120"]
+    volumes:
+      - ./:/var/www/html
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mailadmin-app
+      - mailadmin-redis
+
+  mailadmin-scheduler:
+    build: .
+    container_name: mailadmin-scheduler
+    restart: unless-stopped
+    env_file: .env
+    command: ["sh", "-lc", "while true; do php artisan schedule:run --no-interaction; sleep 60; done"]
+    volumes:
+      - ./:/var/www/html
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mailadmin-app
+
+volumes:
+  mailadmin_mysql:
+  mailadmin_redis:

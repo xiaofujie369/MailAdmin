@@ -1,21 +1,15 @@
 [Unit]
-Description=MailAdmin Pro Dashboard
-After=network.target docker.service
+Description=MailAdmin Pro Docker Compose
+After=network-online.target docker.service
 Requires=docker.service
 
 [Service]
-Type=simple
+Type=oneshot
 WorkingDirectory=/opt/mailadmin-pro
-EnvironmentFile=/opt/mailadmin-pro/.env
-ExecStart=/opt/mailadmin-pro/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8095
-Restart=always
-RestartSec=3
-User=root
-Group=root
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=full
-ReadWritePaths=/opt/mailadmin-pro
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target
