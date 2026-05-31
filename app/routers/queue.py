@@ -12,9 +12,7 @@ router = APIRouter(prefix="/queue", tags=["queue"])
 
 
 @router.get("")
-def queue_page(
-    request: Request,
-    recipient: str = "",
+def queue_page(request: Request, recipient: str = "",
     domain: str = "",
     _: bool = Depends(require_auth),
 ):
@@ -23,11 +21,11 @@ def queue_page(
     queue = postfix.queue_info(clean_recipient, clean_filter_domain)
     ctx = context(request, "邮件队列", "queue")
     ctx.update({"queue": queue, "recipient": clean_recipient, "domain": clean_filter_domain})
-    return templates.TemplateResponse("queue.html", ctx)
+    return templates.TemplateResponse(request, "queue.html", ctx)
 
 
 @router.post("/cancel")
-def cancel_message(
+def cancel_message(request: Request, 
     _: bool = Depends(require_auth),
     message_id: str = Form(...),
     confirm: str = Form(...),
@@ -40,7 +38,7 @@ def cancel_message(
 
 
 @router.post("/delete-one")
-def legacy_delete_one(
+def legacy_delete_one(request: Request, 
     _: bool = Depends(require_auth),
     message_id: str = Form(...),
     confirm: str = Form(...),
@@ -49,7 +47,7 @@ def legacy_delete_one(
 
 
 @router.post("/delete-all")
-def delete_all(_: bool = Depends(require_auth), confirm: str = Form(...)):
+def delete_all(request: Request, _: bool = Depends(require_auth), confirm: str = Form(...)):
     require_confirmation(confirm, "DELETE ALL")
     output = postfix.delete_all()
     audit("queue_delete_all", output)
@@ -57,7 +55,7 @@ def delete_all(_: bool = Depends(require_auth), confirm: str = Form(...)):
 
 
 @router.post("/retry")
-def retry_queue(_: bool = Depends(require_auth), confirm: str = Form(...)):
+def retry_queue(request: Request, _: bool = Depends(require_auth), confirm: str = Form(...)):
     require_confirmation(confirm, "RETRY")
     output = postfix.flush_queue()
     audit("queue_retry", output)
@@ -65,5 +63,5 @@ def retry_queue(_: bool = Depends(require_auth), confirm: str = Form(...)):
 
 
 @router.post("/flush")
-def legacy_flush(_: bool = Depends(require_auth), confirm: str = Form(...)):
+def legacy_flush(request: Request, _: bool = Depends(require_auth), confirm: str = Form(...)):
     return retry_queue(_, confirm)

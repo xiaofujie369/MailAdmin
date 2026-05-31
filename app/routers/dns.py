@@ -13,4 +13,4 @@ def dns_page(request: Request, domain: str = "example.com", _: bool = Depends(re
     result = check_domain(domain)
     ctx = context(request, "DNS 信誉检查", "dns")
     ctx.update({"dns": result})
-    return templates.TemplateResponse("dns.html", ctx)
+    return templates.TemplateResponse(request, "dns.html", ctx)

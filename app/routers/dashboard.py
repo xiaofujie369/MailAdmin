@@ -33,4 +33,4 @@ def index(request: Request, _: bool = Depends(require_auth)):
             "container_status": container_status(),
         }
     )
-    return templates.TemplateResponse("dashboard.html", ctx)
+    return templates.TemplateResponse(request, "dashboard.html", ctx)

@@ -34,11 +34,11 @@ def stats_page(request: Request, _: bool = Depends(require_auth)):
             "chart_data": json.dumps({"daily": daily, "weekly": weekly, "monthly": monthly}, ensure_ascii=False),
         }
     )
-    return templates.TemplateResponse("stats.html", ctx)
+    return templates.TemplateResponse(request, "stats.html", ctx)
 
 
 @router.get("/api")
-def stats_api(_: bool = Depends(require_auth)):
+def stats_api(request: Request, _: bool = Depends(require_auth)):
     logs_1 = docker_logs_since(1)
     logs_7 = docker_logs_since(7)
     logs_30 = docker_logs_since(30, 80000)
@@ -55,5 +55,5 @@ def stats_api(_: bool = Depends(require_auth)):
 
 
 @legacy_router.get("/stats")
-def legacy_stats_api(_: bool = Depends(require_auth)):
+def legacy_stats_api(request: Request, _: bool = Depends(require_auth)):
     return stats_api(_)

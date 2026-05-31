@@ -10,9 +10,7 @@ router = APIRouter(prefix="/logs", tags=["logs"])
 
 
 @router.get("")
-def logs_page(
-    request: Request,
-    lines: int = 1000,
+def logs_page(request: Request, lines: int = 1000,
     keyword: str = "",
     _: bool = Depends(require_auth),
 ):
@@ -24,4 +22,4 @@ def logs_page(
         data = "\n".join(line for line in data.splitlines() if needle in line.lower())
     ctx = context(request, "日志", "logs")
     ctx.update({"logs": data, "lines": safe_lines, "keyword": safe_keyword})
-    return templates.TemplateResponse("logs.html", ctx)
+    return templates.TemplateResponse(request, "logs.html", ctx)

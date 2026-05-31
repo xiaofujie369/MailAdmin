@@ -13,4 +13,4 @@ router = APIRouter(prefix="/system", tags=["system"])
 def system_page(request: Request, _: bool = Depends(require_auth)):
     ctx = context(request, "系统", "system")
     ctx.update({"status": system_status(), "audit_rows": list_rows("audit_log")[:100]})
-    return templates.TemplateResponse("system.html", ctx)
+    return templates.TemplateResponse(request, "system.html", ctx)

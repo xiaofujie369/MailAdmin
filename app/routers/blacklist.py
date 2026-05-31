@@ -23,11 +23,11 @@ legacy_router = APIRouter(tags=["blacklist"])
 def blacklist_page(request: Request, _: bool = Depends(require_auth)):
     ctx = context(request, "名单管理", "blacklist")
     ctx.update({"blocklist": list_rows("blocklist"), "suppressions": list_rows("suppressions")})
-    return templates.TemplateResponse("blacklist.html", ctx)
+    return templates.TemplateResponse(request, "blacklist.html", ctx)
 
 
 @router.post("/add")
-def add_blacklist(
+def add_blacklist(request: Request, 
     _: bool = Depends(require_auth),
     type: str = Form(...),
     value: str = Form(...),
@@ -46,7 +46,7 @@ def add_blacklist(
 
 
 @router.post("/suppressions/add")
-def add_suppression_route(
+def add_suppression_route(request: Request, 
     _: bool = Depends(require_auth),
     type: str = Form(...),
     value: str = Form(...),
@@ -63,7 +63,7 @@ def add_suppression_route(
 
 
 @router.post("/delete")
-def delete_record(
+def delete_record(request: Request, 
     _: bool = Depends(require_auth),
     table: str = Form(...),
     row_id: int = Form(...),
@@ -105,7 +105,7 @@ async def import_csv(
 
 
 @router.get("/export/{table}", response_class=PlainTextResponse)
-def export_csv(table: str, _: bool = Depends(require_auth)):
+def export_csv(request: Request, table: str, _: bool = Depends(require_auth)):
     safe_table = table if table in {"blocklist", "suppressions"} else "suppressions"
     return PlainTextResponse(
         rows_to_csv(list_rows(safe_table), safe_table),
@@ -115,5 +115,5 @@ def export_csv(table: str, _: bool = Depends(require_auth)):
 
 
 @legacy_router.get("/export/{table}", response_class=PlainTextResponse)
-def legacy_export_csv(table: str, _: bool = Depends(require_auth)):
+def legacy_export_csv(request: Request, table: str, _: bool = Depends(require_auth)):
     return export_csv(table, _)
