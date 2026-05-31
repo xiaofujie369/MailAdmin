@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "components.html" import stat %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel-head">
+    <h2>DNS reputation check</h2>
+    <span>MX · SPF · DKIM · DMARC · PTR</span>
+  </div>
+  <form class="toolbar" method="get" action="/dns">
+    <input name="domain" value="{{ dns.domain }}" placeholder="example.com">
+    <button>Check</button>
+  </form>
+</section>
+
+<div class="metric-grid compact">
+  {{ stat("Score", dns.score ~ "/100", "good" if dns.score >= 80 else "warn") }}
+  {{ stat("MX", "OK" if dns.checks.mx else "Missing", "good" if dns.checks.mx else "bad") }}
+  {{ stat("SPF", "OK" if dns.checks.spf else "Missing", "good" if dns.checks.spf else "bad") }}
+  {{ stat("DKIM", "OK" if dns.checks.dkim else "Missing", "good" if dns.checks.dkim else "bad") }}
+  {{ stat("DMARC", "OK" if dns.checks.dmarc else "Missing", "good" if dns.checks.dmarc else "bad") }}
+  {{ stat("PTR", "OK" if dns.checks.ptr else "Missing", "good" if dns.checks.ptr else "bad") }}
+</div>
+
+<div class="two-col">
+  <section class="panel"><div class="panel-head"><h2>MX</h2></div><pre class="terminal">{{ dns.mx }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>SPF</h2></div><pre class="terminal">{{ dns.spf }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>DMARC</h2></div><pre class="terminal">{{ dns.dmarc }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>DKIM mail._domainkey</h2></div><pre class="terminal">{{ dns.dkim_mail }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>DKIM default._domainkey</h2></div><pre class="terminal">{{ dns.dkim_default }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>mail A / PTR</h2></div><pre class="terminal">A:
+{{ dns.a }}
+
+PTR:
+{{ dns.ptr }}</pre></section>
+</div>
+{% endblock %}

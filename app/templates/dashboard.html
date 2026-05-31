@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "components.html" import stat, top_table %}
+
+{% block content %}
+<div class="metric-grid">
+  {{ stat("Today sent", today.sent, "good") }}
+  {{ stat("Today bounced", today.bounced, "bad") }}
+  {{ stat("Today deferred", today.deferred, "warn") }}
+  {{ stat("Today rejected", today.reject, "bad") }}
+  {{ stat("Queue", queue_count, "warn") }}
+  {{ stat("30-day sent", thirty.sent, "good") }}
+</div>
+
+<div class="two-col">
+  <section class="panel">
+    <div class="panel-head">
+      <h2>14-day delivery trend</h2>
+      <span>Sent · bounced · deferred</span>
+    </div>
+    <canvas class="chart" id="dashboardTrend" height="240"></canvas>
+  </section>
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Delivery health</h2>
+      <span>Last 30 days</span>
+    </div>
+    <div class="health-list">
+      <div><span>Failure rate</span><strong>{{ thirty.failure_rate }}%</strong></div>
+      <div><span>Bounce rate</span><strong>{{ thirty.bounce_rate }}%</strong></div>
+      <div><span>Deferred rate</span><strong>{{ thirty.defer_rate }}%</strong></div>
+      <div><span>7-day sent</span><strong>{{ seven.sent }}</strong></div>
+    </div>
+  </section>
+</div>
+
+<div class="two-col">
+  {{ top_table("Top recipients", top.recipients) }}
+  {{ top_table("Top recipient domains", top.domains) }}
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Mail container</h2>
+    <span>docker ps</span>
+  </div>
+  <pre class="terminal">{{ container_status }}</pre>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+renderTrendChart("dashboardTrend", {{ trend | tojson }});
+</script>
+{% endblock %}

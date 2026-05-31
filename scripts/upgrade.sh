@@ -22,24 +22,20 @@ if ! valid_path "${APP_DIR}"; then
   exit 1
 fi
 
-apt-get update
-apt-get install -y python3 python3-venv python3-pip curl dnsutils git docker.io
+if [ ! -d "${APP_DIR}/.git" ]; then
+  echo "${APP_DIR} is not a git checkout." >&2
+  exit 1
+fi
 
-install -d -m 0755 "${APP_DIR}"
 cd "${APP_DIR}"
+git fetch --prune origin
+git pull --ff-only
 
-python3 -m venv venv
 "${APP_DIR}/venv/bin/pip" install --upgrade pip
 "${APP_DIR}/venv/bin/pip" install -r requirements.txt
 
-if [ ! -f .env ]; then
-  install -m 0600 example.env .env
-  echo "Created ${APP_DIR}/.env. Edit ADMIN_PASS before exposing the service."
-else
-  chmod 0600 .env
-fi
-
+chmod 0600 .env 2>/dev/null || true
 install -m 0644 systemd/mailadmin-pro.service "/etc/systemd/system/${SERVICE_NAME}.service"
 systemctl daemon-reload
-systemctl enable --now "${SERVICE_NAME}"
+systemctl restart "${SERVICE_NAME}"
 systemctl status "${SERVICE_NAME}" --no-pager

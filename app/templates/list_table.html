@@ -1,0 +1,27 @@
+{% if rows %}
+<table>
+  <thead><tr><th>ID</th><th>Type</th><th>Value</th><th>Action</th><th>Reason</th><th>Created</th><th>Delete</th></tr></thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.id }}</td>
+      <td>{{ row.type }}</td>
+      <td><code>{{ row.value }}</code></td>
+      <td>{{ row.action if row.action is defined else "-" }}</td>
+      <td>{{ row.reason or "" }}</td>
+      <td>{{ row.created_at }}</td>
+      <td>
+        <form class="inline-form" method="post" action="/blacklist/delete" onsubmit="return doubleConfirm('Delete this record?')">
+          <input type="hidden" name="table" value="{{ table_name }}">
+          <input type="hidden" name="row_id" value="{{ row.id }}">
+          <input class="confirm-input" name="confirm" placeholder="DELETE" autocomplete="off">
+          <button class="danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No records.</p>
+{% endif %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="notice">
+  Lists are managed in MailAdmin first. They are not automatically written into Postfix or Rspamd rules.
+</div>
+
+<div class="two-col">
+  <section class="panel">
+    <div class="panel-head"><h2>Add blacklist entry</h2></div>
+    <form class="stack" method="post" action="/blacklist/add">
+      <select name="type">
+        <option value="email">Email</option>
+        <option value="domain">Domain</option>
+        <option value="ip">IP</option>
+      </select>
+      <input name="value" placeholder="bad@example.com / example.com / 1.2.3.4">
+      <select name="action">
+        <option value="REJECT">REJECT</option>
+        <option value="DISCARD">DISCARD</option>
+        <option value="HOLD">HOLD</option>
+      </select>
+      <input name="reason" placeholder="Reason">
+      <button>Add blacklist</button>
+    </form>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Add suppression</h2></div>
+    <form class="stack" method="post" action="/blacklist/suppressions/add">
+      <select name="type">
+        <option value="email">Email</option>
+        <option value="domain">Domain</option>
+      </select>
+      <input name="value" placeholder="user@example.com / example.com">
+      <input name="reason" placeholder="Unsubscribe / complaint / bounce">
+      <button>Add suppression</button>
+    </form>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>CSV import/export</h2>
+    <span>Headers: type,value,action,reason</span>
+  </div>
+  <div class="toolbar">
+    <form method="post" enctype="multipart/form-data" action="/blacklist/import" onsubmit="return doubleConfirm('Import CSV rows?')">
+      <select name="table">
+        <option value="suppressions">Suppressions</option>
+        <option value="blocklist">Blacklist</option>
+      </select>
+      <input type="file" name="file" accept=".csv,text/csv">
+      <input class="confirm-input" name="confirm" placeholder="IMPORT" autocomplete="off">
+      <button>Import CSV</button>
+    </form>
+    <a class="button secondary" href="/blacklist/export/suppressions">Export suppressions</a>
+    <a class="button secondary" href="/blacklist/export/blocklist">Export blacklist</a>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Blacklist</h2></div>
+  {% set rows = blocklist %}
+  {% set table_name = "blocklist" %}
+  {% include "list_table.html" %}
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Suppressions</h2></div>
+  {% set rows = suppressions %}
+  {% set table_name = "suppressions" %}
+  {% include "list_table.html" %}
+</section>
+{% endblock %}

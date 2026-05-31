@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "components.html" import stat, top_table %}
+
+{% block content %}
+<div class="metric-grid">
+  {{ stat("Sent", summary.sent, "good") }}
+  {{ stat("Bounced", summary.bounced, "bad") }}
+  {{ stat("Deferred", summary.deferred, "warn") }}
+  {{ stat("Rejected", summary.reject, "bad") }}
+  {{ stat("Bounce rate", summary.bounce_rate ~ "%", "bad") }}
+  {{ stat("Deferred rate", summary.defer_rate ~ "%", "warn") }}
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Daily trend</h2>
+    <span>30 days</span>
+  </div>
+  <canvas class="chart" id="dailyTrend" height="260"></canvas>
+</section>
+
+<div class="two-col">
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Weekly trend</h2>
+      <span>12 weeks</span>
+    </div>
+    <canvas class="chart" id="weeklyTrend" height="240"></canvas>
+  </section>
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Monthly trend</h2>
+      <span>12 months</span>
+    </div>
+    <canvas class="chart" id="monthlyTrend" height="240"></canvas>
+  </section>
+</div>
+
+<div class="two-col">
+  {{ top_table("Top recipients", top.recipients) }}
+  {{ top_table("Top domains", top.domains) }}
+  {{ top_table("Top senders", top.senders) }}
+  {{ top_table("Top connection IPs", top.ips) }}
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Daily table</h2>
+    <span>Parsed from docker-mailserver logs</span>
+  </div>
+  <table>
+    <thead><tr><th>Date</th><th>Sent</th><th>Bounced</th><th>Deferred</th><th>Rejected</th></tr></thead>
+    <tbody>
+      {% for day, item in daily.items() %}
+      <tr>
+        <td>{{ day }}</td>
+        <td class="good-text">{{ item.sent }}</td>
+        <td class="bad-text">{{ item.bounced }}</td>
+        <td class="warn-text">{{ item.deferred }}</td>
+        <td class="bad-text">{{ item.reject }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const chartData = {{ chart_data | safe }};
+renderTrendChart("dailyTrend", chartData.daily);
+renderTrendChart("weeklyTrend", chartData.weekly);
+renderTrendChart("monthlyTrend", chartData.monthly);
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} - {{ settings.app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">M</span>
+      <span>
+        <strong>MailAdmin Pro</strong>
+        <small>Mail operations</small>
+      </span>
+    </div>
+    <nav>
+      <a class="{{ 'active' if active == 'dashboard' else '' }}" href="/">Dashboard</a>
+      <a class="{{ 'active' if active == 'stats' else '' }}" href="/stats">Statistics</a>
+      <a class="{{ 'active' if active == 'queue' else '' }}" href="/queue">Queue</a>
+      <a class="{{ 'active' if active == 'blacklist' else '' }}" href="/blacklist">Lists</a>
+      <a class="{{ 'active' if active == 'antispam' else '' }}" href="/antispam">Anti-Spam</a>
+      <a class="{{ 'active' if active == 'dns' else '' }}" href="/dns">DNS</a>
+      <a class="{{ 'active' if active == 'logs' else '' }}" href="/logs">Logs</a>
+      <a class="{{ 'active' if active == 'system' else '' }}" href="/system">System</a>
+    </nav>
+  </aside>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>{{ title }}</h1>
+        <p>{{ settings.mail_container }} · 127.0.0.1:8095</p>
+      </div>
+      <div class="status-stack">
+        {% if settings.password_configured %}
+          <span class="pill ok">Auth configured</span>
+        {% else %}
+          <span class="pill danger">Set ADMIN_PASS</span>
+        {% endif %}
+        <span class="pill">Basic Auth</span>
+      </div>
+    </header>
+    <section class="content">
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+  <script src="{{ url_for('static', path='/js/charts.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

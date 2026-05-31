@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel-head">
+    <h2>Recent mail logs</h2>
+    <span>Keyword is validated and applied in Python</span>
+  </div>
+  <form class="toolbar" method="get" action="/logs">
+    <input name="keyword" value="{{ keyword }}" placeholder="sent / bounced / gmail / reject">
+    <input name="lines" value="{{ lines }}" inputmode="numeric" placeholder="1000">
+    <button>Filter</button>
+  </form>
+  <pre class="terminal tall">{{ logs }}</pre>
+</section>
+{% endblock %}

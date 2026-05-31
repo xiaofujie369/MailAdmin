@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "components.html" import stat %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel-head">
+    <h2>Domain risk check</h2>
+    <span>Rspamd · Postfix · DNS · queue pressure</span>
+  </div>
+  <form class="toolbar" method="get" action="/antispam">
+    <input name="domain" value="{{ domain }}" placeholder="example.com">
+    <button>Check</button>
+  </form>
+</section>
+
+<div class="metric-grid">
+  {{ stat("7-day sent", report.stats.sent, "good") }}
+  {{ stat("7-day bounced", report.stats.bounced, "bad") }}
+  {{ stat("7-day deferred", report.stats.deferred, "warn") }}
+  {{ stat("DNS score", report.dns.score ~ "/100", "good" if report.dns.score >= 80 else "warn") }}
+  {{ stat("Queue pressure", report.queue.count, "warn") }}
+</div>
+
+<section class="panel">
+  <div class="panel-head"><h2>Risk signals</h2></div>
+  <ul class="risk-list">
+    {% for risk in report.risks %}
+    <li>{{ risk }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<div class="two-col">
+  <section class="panel">
+    <div class="panel-head"><h2>Rspamd</h2></div>
+    <pre class="terminal">{{ report.rspamd }}</pre>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Postfix security config</h2></div>
+    <pre class="terminal">{{ report.postfix }}</pre>
+  </section>
+</div>
+{% endblock %}

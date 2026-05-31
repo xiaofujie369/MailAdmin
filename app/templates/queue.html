@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "components.html" import stat %}
+
+{% block content %}
+<div class="notice">
+  Sent mail cannot be recalled after remote handoff. Cancellation only deletes messages still present in the Postfix queue.
+</div>
+
+<div class="metric-grid compact">
+  {{ stat("Visible queue", queue.count, "warn") }}
+  {{ stat("Filter recipient", recipient or "Any") }}
+  {{ stat("Filter domain", domain or "Any") }}
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Filters</h2>
+    <span>Recipient and domain are validated before use</span>
+  </div>
+  <form class="toolbar" method="get" action="/queue">
+    <input name="recipient" value="{{ recipient }}" placeholder="recipient@example.com">
+    <input name="domain" value="{{ domain }}" placeholder="example.com">
+    <button>Apply</button>
+    <a class="button secondary" href="/queue">Reset</a>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Queue messages</h2>
+    <span>Cancel requires DELETE</span>
+  </div>
+  {% if queue.messages %}
+  <table>
+    <thead><tr><th>ID</th><th>Sender</th><th>Recipients</th><th>Size</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for msg in queue.messages %}
+      <tr>
+        <td><code>{{ msg.id }}</code></td>
+        <td>{{ msg.sender }}</td>
+        <td>{{ ", ".join(msg.recipients) }}</td>
+        <td>{{ msg.size }}</td>
+        <td>
+          <form class="inline-form" method="post" action="/queue/cancel" onsubmit="return doubleConfirm('Cancel this queued message?')">
+            <input type="hidden" name="message_id" value="{{ msg.id }}">
+            <input class="confirm-input" name="confirm" placeholder="DELETE" autocomplete="off">
+            <button class="danger">Cancel</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No queued messages matched the current filter.</p>
+  {% endif %}
+</section>
+
+<section class="panel danger-zone">
+  <div class="panel-head">
+    <h2>Queue operations</h2>
+    <span>Every operation is audited</span>
+  </div>
+  <div class="toolbar">
+    <form method="post" action="/queue/retry" onsubmit="return doubleConfirm('Retry delivery for the queue?')">
+      <input class="confirm-input" name="confirm" placeholder="RETRY" autocomplete="off">
+      <button class="warn">Retry delivery</button>
+    </form>
+    <form method="post" action="/queue/delete-all" onsubmit="return doubleConfirm('Delete every queued message?')">
+      <input class="confirm-input" name="confirm" placeholder="DELETE ALL" autocomplete="off">
+      <button class="danger">Clear queue</button>
+    </form>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Raw postqueue output</h2>
+  </div>
+  <pre class="terminal">{{ queue.raw }}</pre>
+</section>
+{% endblock %}

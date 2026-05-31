@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="two-col">
+  <section class="panel"><div class="panel-head"><h2>Load</h2></div><pre class="terminal">{{ status.load }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>Memory</h2></div><pre class="terminal">{{ status.mem }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>Disk</h2></div><pre class="terminal">{{ status.disk }}</pre></section>
+  <section class="panel"><div class="panel-head"><h2>Docker stats</h2></div><pre class="terminal">{{ status.docker }}</pre></section>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Audit log</h2>
+    <span>Latest 100 entries</span>
+  </div>
+  <table>
+    <thead><tr><th>ID</th><th>Action</th><th>Detail</th><th>Created</th></tr></thead>
+    <tbody>
+      {% for row in audit_rows %}
+      <tr><td>{{ row.id }}</td><td>{{ row.action }}</td><td>{{ row.detail }}</td><td>{{ row.created_at }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

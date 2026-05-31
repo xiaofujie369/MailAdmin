@@ -1,51 +1,72 @@
 # MailAdmin Pro
 
-MailAdmin Pro 是一个面向 `docker-mailserver` 的专业邮件服务器监控后台。
+MailAdmin Pro is a FastAPI dashboard for docker-mailserver operations.
 
-## 当前功能
+## Features
 
-- 今日 / 7 日 / 30 日发件统计
-- 成功、退信、延迟、拒收统计
-- 30 日每日趋势
-- Top 收件人、Top 收件域名、Top 发件人、Top 连接 IP
-- Postfix 邮件队列查看
-- 队列邮件取消发送
-- 队列重试投递
-- 清空队列
-- 黑名单管理
-- 退订 / 取消接收名单管理
-- DNS 信誉检查：MX / SPF / DKIM / DMARC / PTR
-- Rspamd / Postfix 反垃圾状态检查
-- 系统状态、Docker 状态、操作审计
+- Dashboard with today, 7-day, 30-day, daily, weekly, and monthly delivery trends.
+- Sent, bounced, deferred, rejected, failure-rate, bounce-rate, and deferred-rate metrics.
+- Top recipients, domains, senders, and connection IPs parsed from docker logs.
+- Postfix queue viewing with recipient/domain filters, cancel queued mail, retry delivery, and clear queue.
+- Blacklist and suppression-list management with audit logs and CSV import/export.
+- Rspamd, Postfix, DNS reputation, SPF, DKIM, DMARC, PTR, and queue pressure checks.
+- SaaS-style responsive admin UI with dark log windows and confirmation flows.
 
-## 技术栈
+## Layout
 
-- Python 3
-- FastAPI
-- Uvicorn
-- SQLite
-- docker-mailserver
-- Caddy / Nginx 反向代理
+```text
+app/
+  main.py
+  config.py
+  auth.py
+  database.py
+  routers/
+  services/
+  templates/
+  static/
+deploy/
+scripts/
+systemd/
+```
 
-## 默认部署路径
+## Configuration
+
+Copy `example.env` to `/opt/mailadmin-pro/.env` and set a strong `ADMIN_PASS`.
 
 ```bash
-/opt/mailadmin-pro
-默认监听地址
-127.0.0.1:8095
-启动方式
-systemctl restart mailadmin-pro
-systemctl status mailadmin-pro --no-pager
-环境变量
-
-请创建 .env 文件：
-
 ADMIN_USER=admin
-ADMIN_PASS=your-strong-password
+ADMIN_PASS=replace-with-a-strong-password
 MAIL_CONTAINER=mailserver
+```
 
-不要把 .env 上传到 GitHub。
+Do not commit `.env`, SQLite databases, logs, or real passwords.
 
-Codex 后续优化方向
+## Run Locally
 
-请参考 CODEX_TASK.md。
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+export ADMIN_PASS=dev-only-password
+uvicorn app.main:app --host 127.0.0.1 --port 8095
+```
+
+## Deploy
+
+```bash
+sudo git clone https://github.com/xiaofujie369/MailAdmin.git /opt/mailadmin-pro
+cd /opt/mailadmin-pro
+sudo APP_DIR=/opt/mailadmin-pro bash scripts/install.sh
+```
+
+Upgrade an existing checkout:
+
+```bash
+sudo APP_DIR=/opt/mailadmin-pro bash scripts/upgrade.sh
+```
+
+Reverse-proxy examples are in `deploy/Caddyfile.example` and `deploy/nginx.example.conf`.
+
+## Safety
+
+Dangerous queue and list operations require browser confirmation and a server-side confirmation phrase. Shell commands are executed without `shell=True`, and user-controlled values are validated before they are passed to Docker, Postfix, DNS, or database operations.

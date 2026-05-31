@@ -1,0 +1,5 @@
+*.sh text eol=lf
+systemd/*.service text eol=lf
+deploy/*.conf text eol=lf
+deploy/Caddyfile.example text eol=lf
+*.py text eol=lf
