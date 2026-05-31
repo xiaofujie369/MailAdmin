@@ -1,8 +1,15 @@
 @extends('layouts.app')
 @section('title', '名单管理')
 @section('content')
+@php
+  $listSections = [
+    'suppressions' => '退订名单',
+    'blocklists' => '黑名单',
+    'allowlists' => '白名单',
+  ];
+@endphp
 <div class="notice">第一版只在后台管理名单，不会默认写入 Postfix 或 Rspamd，避免误伤正常邮件。</div>
-@foreach(['suppressions'=>'退订名单','blocklists'=>'黑名单','allowlists'=>'白名单'] as $table=>$title)
+@foreach($listSections as $table=>$title)
 <section class="panel">
   <div class="panel-head"><h2>{{ $title }}</h2><div><a class="button secondary" href="{{ route('lists.export',$table) }}">导出 CSV</a></div></div>
   <form class="toolbar" method="post" action="{{ route('lists.store',$table) }}">@csrf

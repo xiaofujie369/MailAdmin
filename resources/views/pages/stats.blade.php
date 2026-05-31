@@ -2,6 +2,14 @@
 @section('title', '统计分析')
 @section('content')
 @php
+  $rangeOptions = [
+    'today' => '今天',
+    'yesterday' => '昨天',
+    '7d' => '最近 7 天',
+    '30d' => '最近 30 天',
+    'month' => '本月',
+    'last_month' => '上月',
+  ];
   $dailyChartData = ($daily ?? collect())->map(function ($x) {
     return [
       'label' => $x->date ?? $x->month ?? '-',
@@ -11,10 +19,16 @@
       'reject' => (int)($x->reject_count ?? 0),
     ];
   })->values();
+  $topSections = [
+    'Top 收件人' => $topRecipients,
+    'Top 发件人' => $topSenders,
+    'Top 收件域名' => $topDomains,
+    'Top 连接 IP' => $topIps,
+  ];
 @endphp
 <form class="toolbar panel" method="get">
   <select name="range">
-    @foreach(['today'=>'今天','yesterday'=>'昨天','7d'=>'最近 7 天','30d'=>'最近 30 天','month'=>'本月','last_month'=>'上月'] as $key=>$label)
+    @foreach($rangeOptions as $key=>$label)
       <option value="{{ $key }}" @selected($range===$key)>{{ $label }}</option>
     @endforeach
   </select>
@@ -38,7 +52,7 @@
   </tbody></table>
 </section>
 <div class="two-col">
-@foreach(['Top 收件人'=>$topRecipients,'Top 发件人'=>$topSenders,'Top 收件域名'=>$topDomains,'Top 连接 IP'=>$topIps] as $title=>$rows)
+@foreach($topSections as $title=>$rows)
   <section class="panel"><div class="panel-head"><h2>{{ $title }}</h2></div><table><tbody>
     @foreach($rows as $row)<tr><td><code>{{ $row->recipient ?? $row->sender ?? $row->recipient_domain ?? $row->client_ip }}</code></td><td>{{ $row->total }}</td></tr>@endforeach
   </tbody></table></section>
