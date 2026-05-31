@@ -1,8 +1,14 @@
 <?php
 
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('mailadmin:collect')->everyMinute()->withoutOverlapping();
-Schedule::command('mailadmin:aggregate')->everyMinute()->withoutOverlapping();
-Schedule::command('mailadmin:queue-snapshot')->everyMinute()->withoutOverlapping();
-Schedule::command('mailadmin:health-check')->everyFiveMinutes()->withoutOverlapping();
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+Schedule::command('mail:collect-logs --path=storage/logs/mailserver-docker.log --limit=30000')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('mail:aggregate-stats')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('mail:queue-snapshot')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('mail:check-health')->everyFiveMinutes()->withoutOverlapping();

@@ -29,3 +29,14 @@ main.py.bak.*
 /storage/logs/*
 !/storage/logs/.gitkeep
 /backups/
+
+# mailadmin runtime logs
+storage/logs/*.log
+storage/logs/mailserver-docker.log
+storage/logs/laravel.log
+
+# secrets
+.env
+.env.*
+!.env.example
+backup/

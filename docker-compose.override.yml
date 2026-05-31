@@ -1,0 +1,13 @@
+services:
+  mailadmin-app:
+    volumes:
+      - /var/log/syslog:/var/log/syslog:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  mailadmin-worker:
+    volumes:
+      - /var/log/syslog:/var/log/syslog:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  mailadmin-scheduler:
+    volumes:
+      - /var/log/syslog:/var/log/syslog:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro

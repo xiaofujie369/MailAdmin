@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git unzip libzip-dev libicu-dev libonig-dev dnsutils docker.io default-mysql-client \
