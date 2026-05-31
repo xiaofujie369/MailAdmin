@@ -1,6 +1,17 @@
 @extends('layouts.app')
 @section('title', '统计分析')
 @section('content')
+@php
+  $dailyChartData = ($daily ?? collect())->map(function ($x) {
+    return [
+      'label' => $x->date ?? $x->month ?? '-',
+      'sent' => (int)($x->sent_count ?? 0),
+      'bounced' => (int)($x->bounced_count ?? 0),
+      'deferred' => (int)($x->deferred_count ?? 0),
+      'reject' => (int)($x->reject_count ?? 0),
+    ];
+  })->values();
+@endphp
 <form class="toolbar panel" method="get">
   <select name="range">
     @foreach(['today'=>'今天','yesterday'=>'昨天','7d'=>'最近 7 天','30d'=>'最近 30 天','month'=>'本月','last_month'=>'上月'] as $key=>$label)
@@ -34,6 +45,10 @@
 @endforeach
 </div>
 @push('scripts')
-<script>renderTrend('dailyChart', @json($daily->map(fn($x)=>['label'=>$x->date,'sent'=>$x->sent_count,'bounced'=>$x->bounced_count,'deferred'=>$x->deferred_count])->values()));</script>
+<script>
+if (typeof renderTrend === 'function') {
+  renderTrend('dailyChart', @json($dailyChartData));
+}
+</script>
 @endpush
 @endsection

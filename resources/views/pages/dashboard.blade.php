@@ -3,6 +3,33 @@
 @section('content')
 @php
   $today = $today ?: (object)['sent_count'=>0,'bounced_count'=>0,'deferred_count'=>0,'reject_count'=>0,'failure_rate'=>0];
+  $sevenChartData = ($seven ?? collect())->map(function ($x) {
+    return [
+      'label' => $x->date ?? $x->month ?? '-',
+      'sent' => (int)($x->sent_count ?? 0),
+      'bounced' => (int)($x->bounced_count ?? 0),
+      'deferred' => (int)($x->deferred_count ?? 0),
+      'reject' => (int)($x->reject_count ?? 0),
+    ];
+  })->values();
+  $thirtyChartData = ($thirty ?? collect())->map(function ($x) {
+    return [
+      'label' => $x->date ?? $x->month ?? '-',
+      'sent' => (int)($x->sent_count ?? 0),
+      'bounced' => (int)($x->bounced_count ?? 0),
+      'deferred' => (int)($x->deferred_count ?? 0),
+      'reject' => (int)($x->reject_count ?? 0),
+    ];
+  })->values();
+  $monthChartData = ($months ?? collect())->map(function ($x) {
+    return [
+      'label' => $x->date ?? $x->month ?? '-',
+      'sent' => (int)($x->sent_count ?? 0),
+      'bounced' => (int)($x->bounced_count ?? 0),
+      'deferred' => (int)($x->deferred_count ?? 0),
+      'reject' => (int)($x->reject_count ?? 0),
+    ];
+  })->values();
 @endphp
 <div class="metric-grid">
   <article class="metric good"><span>今日成功</span><strong>{{ $today->sent_count }}</strong></article>
@@ -31,9 +58,11 @@
 </div>
 @push('scripts')
 <script>
-renderTrend('sevenChart', @json($seven->map(fn($x)=>['label'=>$x->date,'sent'=>$x->sent_count,'bounced'=>$x->bounced_count,'deferred'=>$x->deferred_count])->values()));
-renderTrend('thirtyChart', @json($thirty->map(fn($x)=>['label'=>$x->date,'sent'=>$x->sent_count,'bounced'=>$x->bounced_count,'deferred'=>$x->deferred_count])->values()));
-renderTrend('monthChart', @json($months->map(fn($x)=>['label'=>$x->month,'sent'=>$x->sent_count,'bounced'=>$x->bounced_count,'deferred'=>$x->deferred_count])->values()));
+if (typeof renderTrend === 'function') {
+  renderTrend('sevenChart', @json($sevenChartData));
+  renderTrend('thirtyChart', @json($thirtyChartData));
+  renderTrend('monthChart', @json($monthChartData));
+}
 </script>
 @endpush
 @endsection
