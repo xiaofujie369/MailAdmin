@@ -70,14 +70,14 @@ def audit(action: str, detail: str = "") -> None:
 
 def list_rows(table: str) -> list[sqlite3.Row]:
     if table not in {"blocklist", "suppressions", "audit_log"}:
-        raise ValueError("Invalid table")
+        raise ValueError("数据表不合法")
     with get_db() as conn:
         return conn.execute(f"SELECT * FROM {table} ORDER BY id DESC").fetchall()
 
 
 def delete_row(table: str, row_id: int) -> None:
     if table not in {"blocklist", "suppressions"}:
-        raise ValueError("Invalid table")
+        raise ValueError("数据表不合法")
     with get_db() as conn:
         conn.execute(f"DELETE FROM {table} WHERE id=?", (int(row_id),))
 
@@ -116,7 +116,7 @@ def rows_to_csv(rows: Iterable[sqlite3.Row], table: str) -> str:
         for row in rows:
             writer.writerow([row["type"], row["value"], row["reason"] or "", row["created_at"]])
     else:
-        raise ValueError("Invalid CSV table")
+        raise ValueError("CSV 数据表不合法")
     return out.getvalue()
 
 

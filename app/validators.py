@@ -18,28 +18,28 @@ KEYWORD_RE = re.compile(r"^[\w .@:+\-/]{0,80}$", re.UNICODE)
 def clean_container(name: str) -> str:
     value = (name or "").strip()
     if not CONTAINER_RE.fullmatch(value):
-        raise ValueError("Invalid container name")
+        raise ValueError("容器名称不合法")
     return value
 
 
 def clean_queue_id(message_id: str) -> str:
     value = (message_id or "").strip()
     if not QUEUE_ID_RE.fullmatch(value):
-        raise ValueError("Invalid queue message id")
+        raise ValueError("队列邮件 ID 不合法")
     return value.upper()
 
 
 def clean_domain(domain: str) -> str:
     value = (domain or "").strip().lower().rstrip(".")
     if not DOMAIN_RE.fullmatch(value):
-        raise ValueError("Invalid domain")
+        raise ValueError("域名不合法")
     return value
 
 
 def clean_email(email: str) -> str:
     value = (email or "").strip().lower()
     if not EMAIL_RE.fullmatch(value):
-        raise ValueError("Invalid email address")
+        raise ValueError("邮箱地址不合法")
     return value
 
 
@@ -48,13 +48,13 @@ def clean_ip(ip: str) -> str:
     try:
         return str(ipaddress.ip_address(value))
     except ValueError as exc:
-        raise ValueError("Invalid IP address") from exc
+        raise ValueError("IP 地址不合法") from exc
 
 
 def clean_keyword(keyword: str) -> str:
     value = (keyword or "").strip()
     if not KEYWORD_RE.fullmatch(value):
-        raise ValueError("Invalid keyword")
+        raise ValueError("关键词不合法")
     return value
 
 
@@ -65,7 +65,7 @@ def clean_list_value(kind: str, value: str) -> str:
         return clean_domain(value)
     if kind == "ip":
         return clean_ip(value)
-    raise ValueError("Invalid list type")
+    raise ValueError("名单类型不合法")
 
 
 def clean_reason(reason: str) -> str:

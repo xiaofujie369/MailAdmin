@@ -37,6 +37,7 @@ Copy `example.env` to `/opt/mailadmin-pro/.env` and set a strong `ADMIN_PASS`.
 ADMIN_USER=admin
 ADMIN_PASS=replace-with-a-strong-password
 MAIL_CONTAINER=mailserver
+DEFAULT_LANGUAGE=zh-CN
 ```
 
 Do not commit `.env`, SQLite databases, logs, or real passwords.

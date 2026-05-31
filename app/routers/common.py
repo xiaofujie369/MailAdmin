@@ -20,4 +20,4 @@ def context(request: Request, title: str, active: str) -> dict[str, object]:
 
 def require_confirmation(actual: str, expected: str) -> None:
     if actual != expected:
-        raise HTTPException(status_code=400, detail=f"Type {expected} to confirm this operation")
+        raise HTTPException(status_code=400, detail=f"请输入 {expected} 以确认该操作")

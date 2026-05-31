@@ -4,22 +4,22 @@
 {% block content %}
 <section class="panel">
   <div class="panel-head">
-    <h2>DNS reputation check</h2>
+    <h2>DNS 信誉检查</h2>
     <span>MX · SPF · DKIM · DMARC · PTR</span>
   </div>
   <form class="toolbar" method="get" action="/dns">
     <input name="domain" value="{{ dns.domain }}" placeholder="example.com">
-    <button>Check</button>
+    <button>检查</button>
   </form>
 </section>
 
 <div class="metric-grid compact">
-  {{ stat("Score", dns.score ~ "/100", "good" if dns.score >= 80 else "warn") }}
-  {{ stat("MX", "OK" if dns.checks.mx else "Missing", "good" if dns.checks.mx else "bad") }}
-  {{ stat("SPF", "OK" if dns.checks.spf else "Missing", "good" if dns.checks.spf else "bad") }}
-  {{ stat("DKIM", "OK" if dns.checks.dkim else "Missing", "good" if dns.checks.dkim else "bad") }}
-  {{ stat("DMARC", "OK" if dns.checks.dmarc else "Missing", "good" if dns.checks.dmarc else "bad") }}
-  {{ stat("PTR", "OK" if dns.checks.ptr else "Missing", "good" if dns.checks.ptr else "bad") }}
+  {{ stat("评分", dns.score ~ "/100", "good" if dns.score >= 80 else "warn") }}
+  {{ stat("MX", "正常" if dns.checks.mx else "缺失", "good" if dns.checks.mx else "bad") }}
+  {{ stat("SPF", "正常" if dns.checks.spf else "缺失", "good" if dns.checks.spf else "bad") }}
+  {{ stat("DKIM", "正常" if dns.checks.dkim else "缺失", "good" if dns.checks.dkim else "bad") }}
+  {{ stat("DMARC", "正常" if dns.checks.dmarc else "缺失", "good" if dns.checks.dmarc else "bad") }}
+  {{ stat("PTR", "正常" if dns.checks.ptr else "缺失", "good" if dns.checks.ptr else "bad") }}
 </div>
 
 <div class="two-col">

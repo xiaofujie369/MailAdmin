@@ -3,13 +3,13 @@
 {% block content %}
 <section class="panel">
   <div class="panel-head">
-    <h2>Recent mail logs</h2>
-    <span>Keyword is validated and applied in Python</span>
+    <h2>最近邮件日志</h2>
+    <span>关键词会先校验，再由 Python 过滤</span>
   </div>
   <form class="toolbar" method="get" action="/logs">
     <input name="keyword" value="{{ keyword }}" placeholder="sent / bounced / gmail / reject">
     <input name="lines" value="{{ lines }}" inputmode="numeric" placeholder="1000">
-    <button>Filter</button>
+    <button>筛选</button>
   </form>
   <pre class="terminal tall">{{ logs }}</pre>
 </section>

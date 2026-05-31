@@ -22,6 +22,6 @@ def logs_page(
     if safe_keyword:
         needle = safe_keyword.lower()
         data = "\n".join(line for line in data.splitlines() if needle in line.lower())
-    ctx = context(request, "Logs", "logs")
+    ctx = context(request, "日志", "logs")
     ctx.update({"logs": data, "lines": safe_lines, "keyword": safe_keyword})
     return templates.TemplateResponse("logs.html", ctx)

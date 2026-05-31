@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="{{ settings.default_language }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,33 +12,33 @@
       <span class="brand-mark">M</span>
       <span>
         <strong>MailAdmin Pro</strong>
-        <small>Mail operations</small>
+        <small>邮件运维后台</small>
       </span>
     </div>
     <nav>
-      <a class="{{ 'active' if active == 'dashboard' else '' }}" href="/">Dashboard</a>
-      <a class="{{ 'active' if active == 'stats' else '' }}" href="/stats">Statistics</a>
-      <a class="{{ 'active' if active == 'queue' else '' }}" href="/queue">Queue</a>
-      <a class="{{ 'active' if active == 'blacklist' else '' }}" href="/blacklist">Lists</a>
-      <a class="{{ 'active' if active == 'antispam' else '' }}" href="/antispam">Anti-Spam</a>
-      <a class="{{ 'active' if active == 'dns' else '' }}" href="/dns">DNS</a>
-      <a class="{{ 'active' if active == 'logs' else '' }}" href="/logs">Logs</a>
-      <a class="{{ 'active' if active == 'system' else '' }}" href="/system">System</a>
+      <a class="{{ 'active' if active == 'dashboard' else '' }}" href="/">仪表盘</a>
+      <a class="{{ 'active' if active == 'stats' else '' }}" href="/stats">统计分析</a>
+      <a class="{{ 'active' if active == 'queue' else '' }}" href="/queue">邮件队列</a>
+      <a class="{{ 'active' if active == 'blacklist' else '' }}" href="/blacklist">名单管理</a>
+      <a class="{{ 'active' if active == 'antispam' else '' }}" href="/antispam">反垃圾</a>
+      <a class="{{ 'active' if active == 'dns' else '' }}" href="/dns">DNS 检查</a>
+      <a class="{{ 'active' if active == 'logs' else '' }}" href="/logs">日志</a>
+      <a class="{{ 'active' if active == 'system' else '' }}" href="/system">系统</a>
     </nav>
   </aside>
   <main class="shell">
     <header class="topbar">
       <div>
         <h1>{{ title }}</h1>
-        <p>{{ settings.mail_container }} · 127.0.0.1:8095</p>
+        <p>{{ settings.mail_container }} · 127.0.0.1:8095 · {{ settings.default_language }}</p>
       </div>
       <div class="status-stack">
         {% if settings.password_configured %}
-          <span class="pill ok">Auth configured</span>
+          <span class="pill ok">认证已配置</span>
         {% else %}
-          <span class="pill danger">Set ADMIN_PASS</span>
+          <span class="pill danger">请设置 ADMIN_PASS</span>
         {% endif %}
-        <span class="pill">Basic Auth</span>
+        <span class="pill">基础认证</span>
       </div>
     </header>
     <section class="content">

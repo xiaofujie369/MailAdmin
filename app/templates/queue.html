@@ -3,36 +3,36 @@
 
 {% block content %}
 <div class="notice">
-  Sent mail cannot be recalled after remote handoff. Cancellation only deletes messages still present in the Postfix queue.
+  已成功投递的邮件无法在远端撤回。取消发送只会删除仍然位于 Postfix 队列中的邮件。
 </div>
 
 <div class="metric-grid compact">
-  {{ stat("Visible queue", queue.count, "warn") }}
-  {{ stat("Filter recipient", recipient or "Any") }}
-  {{ stat("Filter domain", domain or "Any") }}
+  {{ stat("当前队列", queue.count, "warn") }}
+  {{ stat("收件人筛选", recipient or "全部") }}
+  {{ stat("域名筛选", domain or "全部") }}
 </div>
 
 <section class="panel">
   <div class="panel-head">
-    <h2>Filters</h2>
-    <span>Recipient and domain are validated before use</span>
+    <h2>筛选</h2>
+    <span>收件人和域名会先校验再使用</span>
   </div>
   <form class="toolbar" method="get" action="/queue">
     <input name="recipient" value="{{ recipient }}" placeholder="recipient@example.com">
     <input name="domain" value="{{ domain }}" placeholder="example.com">
-    <button>Apply</button>
-    <a class="button secondary" href="/queue">Reset</a>
+    <button>应用</button>
+    <a class="button secondary" href="/queue">重置</a>
   </form>
 </section>
 
 <section class="panel">
   <div class="panel-head">
-    <h2>Queue messages</h2>
-    <span>Cancel requires DELETE</span>
+    <h2>队列邮件</h2>
+    <span>取消发送需要输入 DELETE</span>
   </div>
   {% if queue.messages %}
   <table>
-    <thead><tr><th>ID</th><th>Sender</th><th>Recipients</th><th>Size</th><th>Action</th></tr></thead>
+    <thead><tr><th>ID</th><th>发件人</th><th>收件人</th><th>大小</th><th>操作</th></tr></thead>
     <tbody>
       {% for msg in queue.messages %}
       <tr>
@@ -41,10 +41,10 @@
         <td>{{ ", ".join(msg.recipients) }}</td>
         <td>{{ msg.size }}</td>
         <td>
-          <form class="inline-form" method="post" action="/queue/cancel" onsubmit="return doubleConfirm('Cancel this queued message?')">
+          <form class="inline-form" method="post" action="/queue/cancel" onsubmit="return doubleConfirm('确认取消这封队列邮件？')">
             <input type="hidden" name="message_id" value="{{ msg.id }}">
             <input class="confirm-input" name="confirm" placeholder="DELETE" autocomplete="off">
-            <button class="danger">Cancel</button>
+            <button class="danger">取消发送</button>
           </form>
         </td>
       </tr>
@@ -52,30 +52,30 @@
     </tbody>
   </table>
   {% else %}
-  <p class="empty">No queued messages matched the current filter.</p>
+  <p class="empty">当前筛选条件下没有队列邮件。</p>
   {% endif %}
 </section>
 
 <section class="panel danger-zone">
   <div class="panel-head">
-    <h2>Queue operations</h2>
-    <span>Every operation is audited</span>
+    <h2>队列操作</h2>
+    <span>每次操作都会记录审计日志</span>
   </div>
   <div class="toolbar">
-    <form method="post" action="/queue/retry" onsubmit="return doubleConfirm('Retry delivery for the queue?')">
+    <form method="post" action="/queue/retry" onsubmit="return doubleConfirm('确认立即重试整个队列？')">
       <input class="confirm-input" name="confirm" placeholder="RETRY" autocomplete="off">
-      <button class="warn">Retry delivery</button>
+      <button class="warn">重试投递</button>
     </form>
-    <form method="post" action="/queue/delete-all" onsubmit="return doubleConfirm('Delete every queued message?')">
+    <form method="post" action="/queue/delete-all" onsubmit="return doubleConfirm('确认删除所有队列邮件？')">
       <input class="confirm-input" name="confirm" placeholder="DELETE ALL" autocomplete="off">
-      <button class="danger">Clear queue</button>
+      <button class="danger">清空队列</button>
     </form>
   </div>
 </section>
 
 <section class="panel">
   <div class="panel-head">
-    <h2>Raw postqueue output</h2>
+    <h2>Postqueue 原始输出</h2>
   </div>
   <pre class="terminal">{{ queue.raw }}</pre>
 </section>

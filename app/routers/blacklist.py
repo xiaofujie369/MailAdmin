@@ -21,7 +21,7 @@ legacy_router = APIRouter(tags=["blacklist"])
 
 @router.get("")
 def blacklist_page(request: Request, _: bool = Depends(require_auth)):
-    ctx = context(request, "Blacklist", "blacklist")
+    ctx = context(request, "名单管理", "blacklist")
     ctx.update({"blocklist": list_rows("blocklist"), "suppressions": list_rows("suppressions")})
     return templates.TemplateResponse("blacklist.html", ctx)
 

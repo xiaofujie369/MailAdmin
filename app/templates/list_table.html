@@ -1,6 +1,6 @@
 {% if rows %}
 <table>
-  <thead><tr><th>ID</th><th>Type</th><th>Value</th><th>Action</th><th>Reason</th><th>Created</th><th>Delete</th></tr></thead>
+  <thead><tr><th>ID</th><th>类型</th><th>值</th><th>动作</th><th>原因</th><th>创建时间</th><th>删除</th></tr></thead>
   <tbody>
     {% for row in rows %}
     <tr>
@@ -11,11 +11,11 @@
       <td>{{ row.reason or "" }}</td>
       <td>{{ row.created_at }}</td>
       <td>
-        <form class="inline-form" method="post" action="/blacklist/delete" onsubmit="return doubleConfirm('Delete this record?')">
+        <form class="inline-form" method="post" action="/blacklist/delete" onsubmit="return doubleConfirm('确认删除这条记录？')">
           <input type="hidden" name="table" value="{{ table_name }}">
           <input type="hidden" name="row_id" value="{{ row.id }}">
           <input class="confirm-input" name="confirm" placeholder="DELETE" autocomplete="off">
-          <button class="danger">Delete</button>
+          <button class="danger">删除</button>
         </form>
       </td>
     </tr>
@@ -23,5 +23,5 @@
   </tbody>
 </table>
 {% else %}
-<p class="empty">No records.</p>
+<p class="empty">暂无记录。</p>
 {% endif %}

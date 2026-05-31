@@ -21,7 +21,7 @@ def queue_page(
     clean_recipient = clean_email(recipient) if recipient else ""
     clean_filter_domain = clean_domain(domain) if domain else ""
     queue = postfix.queue_info(clean_recipient, clean_filter_domain)
-    ctx = context(request, "Queue", "queue")
+    ctx = context(request, "邮件队列", "queue")
     ctx.update({"queue": queue, "recipient": clean_recipient, "domain": clean_filter_domain})
     return templates.TemplateResponse("queue.html", ctx)
 

@@ -23,7 +23,7 @@ def stats_page(request: Request, _: bool = Depends(require_auth)):
     weekly = group_trend(logs_90, 12, "week")
     monthly = group_trend(logs_365, 12, "month")
     top = extract_top(logs_30)
-    ctx = context(request, "Statistics", "stats")
+    ctx = context(request, "统计分析", "stats")
     ctx.update(
         {
             "summary": parse_stats(logs_30),

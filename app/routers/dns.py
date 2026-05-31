@@ -11,6 +11,6 @@ router = APIRouter(prefix="/dns", tags=["dns"])
 @router.get("")
 def dns_page(request: Request, domain: str = "example.com", _: bool = Depends(require_auth)):
     result = check_domain(domain)
-    ctx = context(request, "DNS Reputation", "dns")
+    ctx = context(request, "DNS 信誉检查", "dns")
     ctx.update({"dns": result})
     return templates.TemplateResponse("dns.html", ctx)

@@ -16,9 +16,9 @@ function renderTrendChart(id, rawData) {
 
   const labels = Object.keys(rawData);
   const series = [
-    { key: "sent", color: "#0f9f6e", label: "Sent" },
-    { key: "bounced", color: "#c2410c", label: "Bounced" },
-    { key: "deferred", color: "#b7791f", label: "Deferred" },
+    { key: "sent", color: "#0f9f6e", label: "成功" },
+    { key: "bounced", color: "#c2410c", label: "退信" },
+    { key: "deferred", color: "#b7791f", label: "延迟" },
   ];
   const values = labels.flatMap((label) => series.map((s) => Number(rawData[label][s.key] || 0)));
   const max = Math.max(1, ...values);

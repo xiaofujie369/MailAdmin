@@ -14,7 +14,7 @@ class CommandResult:
 
 def run_command(args: list[str], timeout: int = 25) -> CommandResult:
     if not args or any(not isinstance(part, str) or not part for part in args):
-        raise ValueError("Command arguments must be non-empty strings")
+        raise ValueError("命令参数必须是非空字符串")
     try:
         proc = subprocess.run(
             args,

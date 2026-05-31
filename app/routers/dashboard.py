@@ -21,7 +21,7 @@ def index(request: Request, _: bool = Depends(require_auth)):
     trend = group_trend(logs_30, 14, "day")
     top = extract_top(logs_30, 5)
     queue = queue_info()
-    ctx = context(request, "Dashboard", "dashboard")
+    ctx = context(request, "仪表盘", "dashboard")
     ctx.update(
         {
             "today": today,

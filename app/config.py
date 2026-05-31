@@ -12,6 +12,7 @@ class Settings:
     admin_pass: str = os.getenv("ADMIN_PASS", "")
     host: str = os.getenv("HOST", "127.0.0.1")
     port: int = int(os.getenv("PORT", "8095"))
+    default_language: str = os.getenv("DEFAULT_LANGUAGE", "zh-CN")
 
     @property
     def db_path(self) -> Path:

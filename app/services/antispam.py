@@ -12,15 +12,15 @@ def security_report(domain: str) -> dict[str, object]:
     risks: list[str] = []
 
     if int(stats["deferred"]) > int(stats["sent"]) * 2 and int(stats["deferred"]) > 20:
-        risks.append("Deferred queue is unusually high. Check remote throttling, IP reputation, and DNS records.")
+        risks.append("延迟队列异常偏高。请检查远端限速、IP 信誉和 DNS 记录。")
     if int(stats["bounced"]) > max(10, int(stats["sent"]) * 0.2):
-        risks.append("Bounce rate is high. Clean invalid recipients and enforce suppression lists before sending.")
+        risks.append("退信率偏高。请清理无效收件人，并在发送前应用退订名单。")
     if dns["score"] < 80:
-        risks.append("DNS reputation is incomplete. SPF, DKIM, DMARC, and PTR should all pass.")
+        risks.append("DNS 信誉配置不完整。SPF、DKIM、DMARC 和 PTR 应全部通过。")
     if int(queue["count"]) > max(50, int(stats["sent"]) * 0.5):
-        risks.append("Queue pressure is high. Review blocked destinations before retrying delivery.")
+        risks.append("队列压力偏高。重试投递前请先检查受阻目标。")
     if not risks:
-        risks.append("No obvious high-risk signal found in recent mail logs.")
+        risks.append("最近邮件日志中未发现明显高风险信号。")
 
     return {
         "stats": stats,

@@ -4,25 +4,25 @@
 {% block content %}
 <section class="panel">
   <div class="panel-head">
-    <h2>Domain risk check</h2>
-    <span>Rspamd · Postfix · DNS · queue pressure</span>
+    <h2>域名风险检查</h2>
+    <span>Rspamd · Postfix · DNS · 队列压力</span>
   </div>
   <form class="toolbar" method="get" action="/antispam">
     <input name="domain" value="{{ domain }}" placeholder="example.com">
-    <button>Check</button>
+    <button>检查</button>
   </form>
 </section>
 
 <div class="metric-grid">
-  {{ stat("7-day sent", report.stats.sent, "good") }}
-  {{ stat("7-day bounced", report.stats.bounced, "bad") }}
-  {{ stat("7-day deferred", report.stats.deferred, "warn") }}
-  {{ stat("DNS score", report.dns.score ~ "/100", "good" if report.dns.score >= 80 else "warn") }}
-  {{ stat("Queue pressure", report.queue.count, "warn") }}
+  {{ stat("7 日成功", report.stats.sent, "good") }}
+  {{ stat("7 日退信", report.stats.bounced, "bad") }}
+  {{ stat("7 日延迟", report.stats.deferred, "warn") }}
+  {{ stat("DNS 评分", report.dns.score ~ "/100", "good" if report.dns.score >= 80 else "warn") }}
+  {{ stat("队列压力", report.queue.count, "warn") }}
 </div>
 
 <section class="panel">
-  <div class="panel-head"><h2>Risk signals</h2></div>
+  <div class="panel-head"><h2>风险信号</h2></div>
   <ul class="risk-list">
     {% for risk in report.risks %}
     <li>{{ risk }}</li>
@@ -36,7 +36,7 @@
     <pre class="terminal">{{ report.rspamd }}</pre>
   </section>
   <section class="panel">
-    <div class="panel-head"><h2>Postfix security config</h2></div>
+    <div class="panel-head"><h2>Postfix 安全配置</h2></div>
     <pre class="terminal">{{ report.postfix }}</pre>
   </section>
 </div>
